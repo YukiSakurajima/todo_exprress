@@ -6,17 +6,44 @@ const fs = require('fs');
 app.set('view engine', 'ejs');
 app.set("views", path.join(__dirname, 'views'));
 
-app.get('/', (req, res) => {
-     // get data from file
-     fs.readFile('./tasks', 'utf8', (err, data) => {
+const readFile = (filename) => {
+    return new Promise((resolve, reject) => {
+    // get data from file
+    fs.readFile(filename, 'utf8', (err, data) => {
         if (err) {
             console.error(err);
             return;
         }
         // tasks list data from file
         const tasks = data.split("\n") 
-        res.render('index', {tasks: tasks})})
+        resolve(tasks)
+        });
+    })
+}
+
+app.get('/', (req, res) => {
+    // tasks list data from file
+    readFile('./tasks')
+    .then(tasks => {
+        console.log(tasks)
+        res.render('index', {tasks: tasks})
+    })
 })
+
+app.use(express.urlencoded({extended:true}));
+
+
+ app.post('/', (req, res) => {
+    console.log(req.body.task)
+         // get data from file
+         fs.readFile('./tasks', 'utf8', (err, data) => {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            // tasks list data from file
+            const tasks = data.split("\n")
+ })})
 
 app.listen(3001, () => {
     console.log('Server started at localhost:3001');
