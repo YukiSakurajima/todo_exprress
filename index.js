@@ -34,6 +34,17 @@ app.use(express.urlencoded({extended:true}));
 
 
  app.post('/', (req, res) => {
+    readFile('./tasks')
+    .then(tasks =>{
+        tasks.push(req.body.task)
+        const data = tasks.join("\n")
+        fs.writeFile(  './tasks', data, (err) => {
+            if (err) {
+                console.error(err);
+                return;
+            }})
+            res.redirect('/')
+    })
     console.log(req.body.task)
          // get data from file
          fs.readFile('./tasks', 'utf8', (err, data) => {
