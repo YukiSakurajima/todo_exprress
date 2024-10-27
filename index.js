@@ -39,7 +39,6 @@ app.get('/', (req, res) => {
     // tasks list data from file
     readFile('./tasks.json')
     .then(tasks => {
-        console.log(tasks)
         res.render('index', {tasks: tasks})
     })
 })
@@ -49,6 +48,10 @@ app.use(express.urlencoded({extended:true}));
 
 app.post('/', (req, res) => {
     // tasks list data from file
+    // if file is empty give error or smth//
+    if (req.body.task.trim().length == 0) {
+        return res.status(400).send('Task cannot be empty');
+    }
     readFile('./tasks.json')
       .then(tasks => {
     
