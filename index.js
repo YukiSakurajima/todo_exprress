@@ -70,10 +70,10 @@ app.post('/', (req, res) => {
         console.log(newTask)
         // add form sent task to task array
         tasks.push(newTask)
-        console.log(tasks)
         data = JSON.stringify(tasks, null, 2)
-        console.log(data)
-    
+        writeFile('./tasks.json', data)    
+
+
         fs.writeFile('./tasks.json', data, 'utf-8', err => {
             if (err) {
                 console.error(err);
@@ -103,6 +103,24 @@ app.post('/', (req, res) => {
             res.redirect('/')
         })
     })
+
+    app.get('/delete-all-tasks', (req, res) => {
+        readFile('./tasks.json')
+            .then(tasks => {
+                tasks = []; // Set tasks to an empty array
+                const data = JSON.stringify(tasks, null, 2); // Format JSON nicely
+    
+                return writeFile('./tasks.json', data); // Write empty array to file
+            })
+            .then(() => {
+                res.redirect('/'); // Redirect after file write completes
+            })
+            .catch(err => {
+                console.error(err); // Log any errors
+                res.status(500).send("Error deleting tasks");
+            });
+    });
+    
     
     app.listen(3001, () => {
         console.log('Example app is started at http://localhost:3001')
