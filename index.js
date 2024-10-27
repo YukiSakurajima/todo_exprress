@@ -106,7 +106,7 @@ app.post('/', (req, res) => {
             res.redirect('/')
         })
     })
-
+   
     app.get('/delete-all-tasks', (req, res) => {
         readFile('./tasks.json')
             .then(tasks => {
@@ -124,7 +124,50 @@ app.post('/', (req, res) => {
             });
     });
     
-    
+    // update task
+app.post('/update-task', (req, res) => {
+	const updateTask = req.body
+	let error = null
+	if(req.body.task.trim().length == 0){
+		error = 'Please insert correct task data'
+		readFile('./tasks.json')
+		.then(tasks => {
+			res.render('update', {
+			task: {task: updateTask.task, id: updateTask.taskId},
+			error: error
+		})
+	})
+} else {
+// tasks list data from file	
+	readFile('./tasks.json')
+	.then(tasks => {
+		tasks.forEach((task, index) => {
+			if(task.id === parseInt(req.body.taskId)){
+				task.task = req.body.task
+			}
+		})
+	data = JSON.stringify(tasks, null, 2)
+	writeFile('tasks.json', data)
+	// redirect to / to see result
+	res.redirect('/')
+		})	
+	}
+})
+app.get('/update-task/:taskId', (req,res)=> {
+	let updateTaskId = parseInt(req.params.taskId)
+	readFile('./tasks.json')
+	.then(tasks => {
+		tasks.forEach((task, index) => {
+			if(task.id === updateTaskId){
+				res.render('update',{
+				task: task,
+				error: null
+				})
+			}
+		})
+	})
+})
+
     app.listen(3001, () => {
         console.log('Example app is started at http://localhost:3001')
     })
