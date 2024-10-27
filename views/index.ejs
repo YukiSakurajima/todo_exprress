@@ -21,29 +21,42 @@
                 <div class="card-content">
                   <span class="card-title">Todo list</span>
                   <div class="row">
-                    <form class="col s12" method="post" action="/"  >
-                        <div class="row">
-                            <div class="input-field col s12">
-                                <input placeholder="Task" id="task" type="text" name='task'>
-                                <label for="task">Insert Task</label>
-                            </div>
+                    <form class="col s12" method="post" action="/" onsubmit="return validateForm()">
+                      <div class="row">
+                        <div class="input-field col s12">
+                          <input placeholder="Task" id="task" type="text" name='task'>
+                          <label for="task">Insert Task</label>
+                          <span class="helper-text" id="error-message" style="color: red; display: none;">Task cannot be empty</span>
                         </div>
-                        <input class="btn" type="submit" value="Add task">
+                      </div>
+                      <input class="btn" type="submit" value="Add task">
                     </form>
                   </div>
                 </div>
                 <div class="card-action">
+                <script>
+                  function validateForm() {
+                    var taskInput = document.getElementById('task').value;
+                    if (taskInput.trim() === "") {
+                      document.getElementById('error-message').style.display = 'block';
+                      return false;
+                    }
+                    document.getElementById('error-message').style.display = 'none';
+                    return true;
+                  }
+                </script>
 
                 <ul class="collection">
                   <% tasks.forEach((task) => { %>
                       <li class="collection-item"><%=  task.task %>
-                      <a href="delete-task/<%= task.id %>" class="secondary-content"><i class="material-icons">delete</i></a>
+                        <a href="update-task/<%= task.id %>" class="secondary-content"><i class="material-icons">edit</i></a>
+                        <a href="delete-task/<%= task.id %>" class="secondary-content"><i class="material-icons">delete</i></a>
                       </li>
                   <% }) %>
                     </ul>
                     <div>
                       <a href="/delete-all-tasks" class="btn">Delete all tasks</a>
-                  </div>                  
+                  </div>
                 </div>
               </div>
             </div>
